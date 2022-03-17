@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--    把我们的UserDaoImpl实现类交给Spring容器进行管理，交给spring创建对象-->
+    <bean id="userDao" class="com.meng.dao.impl.UserDaoImpl" scope="singleton"></bean>
+
+
+</beans>
