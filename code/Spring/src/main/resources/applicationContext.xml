@@ -4,7 +4,53 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!--    把我们的UserDaoImpl实现类交给Spring容器进行管理，交给spring创建对象-->
-    <bean id="userDao" class="com.meng.dao.impl.UserDaoImpl" scope="singleton"></bean>
+    <!--    <bean id="userDao" class="com.meng.dao.impl.UserDaoImpl" scope="singleton" init-method="init"-->
+    <!--          destroy-method="destroy"></bean>-->
 
+    <!--    <bean id="factoryUserDao" class="com.meng.factory.StaticFactory" scope="singleton"-->
+    <!--          factory-method="getUserDao"></bean>-->
+
+    <!--    <bean id="factory" class="com.meng.factory.DynamicFactory" scope="singleton"></bean>-->
+    <!--    <bean id="userDao" factory-bean="factory" factory-method="getUserDao"></bean>-->
+
+
+    <!--    <bean id="userDao" class="com.meng.dao.impl.UserDaoImpl">-->
+    <!--        <property name="username" value="小胡"></property>-->
+    <!--        <property name="age" value="20"></property>-->
+    <!--        <property name="strList">-->
+    <!--            <list>-->
+    <!--                <value>aaa</value>-->
+    <!--                <value>bbb</value>-->
+    <!--                <value>ccc</value>-->
+    <!--            </list>-->
+    <!--        </property>-->
+    <!--        <property name="userMap">-->
+    <!--            <map>-->
+    <!--                <entry key="user1" value-ref="user"></entry>-->
+    <!--            </map>-->
+    <!--        </property>-->
+    <!--        <property name="properties">-->
+    <!--            <props>-->
+    <!--                <prop key="username">root</prop>-->
+    <!--                <prop key="password">12345678</prop>-->
+
+    <!--            </props>-->
+    <!--        </property>-->
+    <!--    </bean>-->
+    <!--    <bean id="user" class="com.meng.pojo.User">-->
+    <!--        <property name="name" value="xiaohu"></property>-->
+    <!--        <property name="addr" value="安徽"></property>-->
+    <!--    </bean>-->
+
+    <!--    <bean id="userService" class="com.meng.service.impl.UserServiceImpl" >-->
+    <!--        <property name="userDao" ref="userDao"></property>-->
+    <!--    </bean>-->
+    <!--    <bean id="userService" class="com.meng.service.impl.UserServiceImpl" p:userDao-ref="userDao"></bean>-->
+    <bean id="userService" class="com.meng.service.impl.UserServiceImpl">
+        <property name="userDao" ref="userDao"></property>
+    </bean>
+
+    <import resource="applicationContext-user.xml"></import>
+    <import resource="applicationContext-userDaoImpl.xml"></import>
 
 </beans>
