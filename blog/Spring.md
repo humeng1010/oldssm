@@ -666,3 +666,279 @@ public class DataSourceTest {
     }
 ```
 
+
+
+### Spring加载properties文件
+
+```xml
+在bean标签内引入命名空间
+xmlns:context="http://www.springframework.org/schema/context"
+xsi:schemaLocation="http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd"
+```
+
+```xml
+<!--    加载外部的properties文件-->
+    <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+<!--el表达式: ${key}-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driver}"></property>
+        <property name="jdbcUrl" value="${jdbc.url}"></property>
+        <property name="user" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+```
+
+
+
+
+
+## Spring注解开发
+
+### Spring原始注解
+
+Spring是轻代码而重配置的框架，配置比较繁重，影响开发效率，所以注解开发是一种趋势，注解代替xml配置文件可以简化配置，提高开发效率
+
+
+
+Spring的原始注解主要是替代< Bean >的配置
+
+| 注解                          | 说明                                             |
+| ----------------------------- | ------------------------------------------------ |
+| **@Component** (组件)         | 使用在类上用于实例化Bean                         |
+| **@Controller** (控制层)      | 使用在web层类上用于实例化Bean                    |
+| **@Service** (业务层)         | 使用在Service层上用于实例化Bean                  |
+| **@Repository** (Dao层)(仓库) | 使用在Dao层类上用于实例化Bean                    |
+| @**Autowired**                | 使用在字段上用于根据类型依赖注入                 |
+| @**Qualifier**                | 结合@Autowired一起使用，用于根据名称进行依赖注入 |
+| @**Resource**                 | 相当于@Autowired+@Qualifier，按照名称进行注入    |
+| @**Value**                    | 注入普通属性                                     |
+| @**Scope**                    | 标注Bean的作用范围                               |
+| @PostConstruct (init-method)  | 使用在方法上标注该方法是Bean的初始化方法         |
+| @PreDestroy (destroy-method)  | 使用在方法上标注该方法是Bean的销毁方法           |
+
+
+
+### Spring新注解
+
+使用上面的注解还不能全部替代xml配置文件，还需要使用注解替代的配置如下：
+
+- 非自定义的Bean的配置：< bean >
+- 加载properties文件的配置：< context:properties-placeholder >
+- 组件扫描的配置：< context:component-scan >
+- 引入其他文件：< import >
+
+
+
+| 注解            | 说明                                                         |
+| --------------- | ------------------------------------------------------------ |
+| @Configuration  | 用于指定当前类是一个Spring配置类，当创建容器时会从该类上加载注解 |
+| @ComponentScan  | 用于指定Spring在初始化容器时要扫描的包。<br>作用和在Spring的xml配置文件中的<br><context:componet-scan base-package="com.meng"/>一样 |
+| @Bean           | 使用在方法上，标注将该方法的返回值存储到Spring的容器中       |
+| @PropertySource | 用于加载 .properties文件中的配置                             |
+| @Import         | 用于导入其他配置类                                           |
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation=
+               "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--    配置组件扫描-->
+<!--    <context:component-scan base-package="com.meng"></context:component-scan>-->
+
+<!--    加载外部的properties文件-->
+<!--    <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>-->
+<!--    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">-->
+<!--        <property name="driverClass" value="${jdbc.driver}"></property>-->
+<!--        <property name="jdbcUrl" value="${jdbc.url}"></property>-->
+<!--        <property name="user" value="${jdbc.username}"></property>-->
+<!--        <property name="password" value="${jdbc.password}"></property>-->
+<!--    </bean>-->
+
+
+
+
+</beans>
+```
+
+使用配置类代替Spring的xml文件
+
+```java
+package com.meng.config;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
+
+import javax.sql.DataSource;
+import java.beans.PropertyVetoException;
+
+//标志——该类是Spring的一个核心配置类
+@Configuration
+//<!--    配置组件扫描-->
+//    <context:component-scan base-package="com.meng"></context:component-scan>
+@ComponentScan("com.meng")
+@Import({DataSourceConfiguration.class})
+public class SpringConfiguration {
+
+
+}
+
+```
+
+```java
+package com.meng.config;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+import javax.sql.DataSource;
+import java.beans.PropertyVetoException;
+
+@Configuration
+//<context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+@PropertySource("classpath:jdbc.properties")
+public class DataSourceConfiguration {
+    @Value("${jdbc.driver}")
+    private String driver;
+    @Value("${jdbc.url}")
+    private String url;
+    @Value("${jdbc.username}")
+    private String user;
+    @Value("${jdbc.password}")
+    private String password;
+
+    @Bean("dataSource")//Spring会将当前方法的返回值以指定名称存储到Spring容器中
+    public DataSource getDataSource() throws PropertyVetoException {
+        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        dataSource.setDriverClass(driver);
+        dataSource.setJdbcUrl(url);
+        dataSource.setUser(user);
+        dataSource.setPassword(password);
+        return dataSource;
+    }
+}
+
+```
+
+
+
+
+
+## Spring集成Junit
+
+通过上面的测试，我们发现每一个测试类中都有这两行代码：
+
+```java
+			ApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+      UserService userService = applicationContext.getBean("userService", UserService.class);
+```
+
+这两行是获取容器，如果不写的话，直接会提示空指针异常，所有又不能轻易删掉
+
+
+
+- 让SpringJunit负责创建Spring容器，但是需要将配置文件名称告诉Spring
+- 将需要进行测试Bean直接在测试类中进行注入
+
+
+
+步骤：
+
+- 导入spring集成Junit的坐标
+
+  ```xml
+  <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-test</artifactId>
+              <version>5.3.15</version>
+          </dependency>
+  ```
+
+  
+
+- 使用@Runwith注解替换原来的运行期
+
+  ```java
+  @RunWith(SpringJUnit4ClassRunner.class)
+  
+  ```
+
+  
+
+- 使用@ContextConfiguration指定配置文件或配置类
+
+  ```java
+  @ContextConfiguration(classes = {SpringConfiguration.class})
+  
+  ```
+
+  
+
+- 使用@Autowired注入需要测试的对象
+
+  ```java
+   @Autowired
+      private UserService userService;
+  ```
+
+  
+
+- 创建测试方法进行测试
+
+  ```java
+  @Test
+      public void test1() throws SQLException {
+  
+          userService.save();
+          System.out.println(dataSource.getConnection());
+      }
+  ```
+
+  
+
+
+
+```java
+package com.meng.test;
+
+import com.meng.config.SpringConfiguration;
+import com.meng.service.UserService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {SpringConfiguration.class})
+public class SpringJunitTest {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Test
+    public void test1() throws SQLException {
+
+        userService.save();
+        System.out.println(dataSource.getConnection());
+    }
+}
+
+```
+
+
+
+
+
