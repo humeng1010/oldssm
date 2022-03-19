@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace:名称空间
+-->
+<mapper namespace="com.meng.mapper.UserMapper">
+    <!--    id：唯一标识
+            resultType:返回结果的类型（将来数据返回的是什么类型就写什么类型）
+    -->
+    <!--    我们发现数据库列名和实体类的名称有的不一样，显示数据为null-->
+    <!--    解决方案一：起别名（每次查询都要定义一次别名，不方便）-->
+    <!--    <select id="getAll" resultType="brand">-->
+    <!--        select id, brand_name as brandName, company_name as companyName, ordered, description, status-->
+    <!--        from tb_brand;-->
+    <!--    </select>-->
+    <!--    解决方案二：sql片段（不灵活）-->
+    <!--    <sql id="brand_column">-->
+    <!--        id, brand_name as brandName, company_name as companyName, ordered, description, status-->
+    <!--    </sql>-->
+    <!--    <select id="getAll" resultType="brand">-->
+    <!--        select-->
+    <!--        <include refid="brand_column"></include>-->
+    <!--        from tb_brand;-->
+    <!--    </select>-->
+    <!--解决方案三：resultMap-->
+    <!--    id:唯一标识
+            type：映射的文件类型（该实体类），支持别名
+    -->
+
+</mapper>

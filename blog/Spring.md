@@ -942,3 +942,38 @@ public class SpringJunitTest {
 
 
 
+## SpringMVC
+
+### 概述
+
+SpringMVC是一种基于Java的实现MVC设计模式的请求驱动类型的轻量级Web框架，属于SpringFrameWork的后续产品。
+
+
+
+
+
+### 开发步骤
+
+1. 导入SpringMVC包
+2. 配置Servlet
+3. 编写Controller
+4. 把Controller使用注解配置到我们的Spring的容器中@Controller
+5. 配置spring-mvc.xml（配置组件扫描）
+6. 执行访问的测试
+
+
+
+
+
+### SpringMVC的数据响应方式
+
+1. 页面跳转
+   - 直接返回字符串
+   - 通过ModelAndView对象返回
+2. 回写数据
+   - 直接返回字符串
+   - 返回对象或集合
+
+#### 页面跳转
+
+1. 返回字符串形式
