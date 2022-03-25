@@ -1,0 +1,21 @@
+spring:
+  #设置开发环境
+  profiles:
+    active: dev #开发环境
+  # 连接数据库配置
+  datasource:
+    username: root
+    password: 12345678
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///mybatis
+  #配置MP的日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #默认的控制台输出，其他的log4j，slf4j需要导入对应的依赖
+
+  #配置逻辑删除
+  global-config:
+    db-config:
+      logic-delete-value: 1 #删的值，把这个删除的值修改为0就可以恢复数据，方便管理员操作
+      logic-not-delete-value: 0 #没有删除的值
+
